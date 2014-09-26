@@ -9,6 +9,9 @@ from nltk import word_tokenize
 import requests
 import json
 import redis
+import difflib
+
+DIFF_THRESHOLD = 0.75
 
 app = Celery('tasks', broker='redis://localhost:6379/0')
 
@@ -42,11 +45,19 @@ def analyze_tweet(text):
                 try:
                     if len(json_result['query']['search']) > 0:
                         title = json_result['query']['search'][0]['title']
-                        redis.set('aragopedia:%s' % tag[0], title)
-                        print text
-                        print tag[0]
-                        print title
-                        return True
+                        ratio = difflib.SequenceMatcher(None, tag[0], title).ratio()
+                        if ratio >= DIFF_THRESHOLD:
+                            redis.set('aragopedia:%s' % tag[0], title)
+                            print text
+                            print tag[0]
+                            print title
+                            print ratio
+                            return True
+                        else:
+                            print tag[0]
+                            print title
+                            print ratio
+                            redis.set('aragopedia:%s' % tag[0], 'None')
                     else:
                         redis.set('aragopedia:%s' % tag[0], 'None')
                 except:
