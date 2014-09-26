@@ -5,6 +5,7 @@ import psycopg2
 import time
 from nltk.corpus import conll2002
 from nltk.tag.hmm import HiddenMarkovModelTagger
+from nltk import word_tokenize
 
 app = Celery('tasks', broker='redis://localhost:6379/0')
 
@@ -17,6 +18,14 @@ cur = conn.cursor()
 sents = conll2002.tagged_sents()
 hmm_tagger = HiddenMarkovModelTagger.train(sents)
 
+print 'Tagger ready'
+
+def analyze_tweet(text):
+    tokens = word_tokenize(text)
+    tags = hmm_tagger.tag(tokens)
+    for tag in tags:
+        if tag[1] == 'NP':
+            print tag[0]
 
 @app.task
 def browse_tuits():
@@ -77,6 +86,7 @@ def get_stream():
 
     for tweet in iterator:
         text = tweet['text']
+        analyze_tweet(text)
         user = tweet['user']['screen_name']
         name = tweet['user']['name']
         id = tweet['id']
