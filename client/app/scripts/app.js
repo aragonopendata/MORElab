@@ -17,7 +17,8 @@ angular
     'ngSanitize',
     'ngTouch',
     'ui.bootstrap',
-    'ui.router'
+    'ui.router',
+    'leaflet-directive'
   ])
   .config(function ($stateProvider, $urlRouterProvider) {
     $stateProvider
@@ -35,6 +36,11 @@ angular
         url: '/tuits',
         templateUrl: 'views/tuits.html',
         controller: 'TuitsCtrl'
+      })
+      .state('map',{
+        url: '/map',
+        templateUrl: 'views/map.html',
+        controller: 'MapCtrl'
       });
       $urlRouterProvider.otherwise('/');
   });

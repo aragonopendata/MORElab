@@ -14,7 +14,8 @@
     "angular-route": "~1.2.0",
     "angular-ui-router": "*",
     "angular-ui-bootstrap":"*",
-    "angular-bootstrap":"*"
+    "angular-bootstrap":"*",
+    "angular-leaflet-directive": "*"
 
   },
   "devDependencies": {
