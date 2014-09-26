@@ -13,17 +13,34 @@ import difflib
 from time import sleep
 from celery.signals import celeryd_init
 from multiprocessing import Pool
+from nltk import UnigramTagger, BigramTagger, TrigramTagger
 
 def analyze(text, track_list):
+    for item in track_list:
+        if item in text:
+            if len(item.split(' ')) > 1:
+                print text
+                return True
+
     tokens = word_tokenize(text)
     tags = hmm_tagger.tag(tokens)
+    i = 0
     for tag in tags:
         if tag[0] in track_list:
-            if tag[1].startswith('N') and len(tag[1]) <= 2:
-                print text
-                print tag
-                return True
-                break
+            if tag[1] != None:
+                if tag[1].startswith('N') and len(tag[1]) <= 2:
+                    if i > 0:
+                        if tags[i-1][1] != None:
+                            if tags[i-1][1].startswith('D'):
+                                continue
+                        else:
+                            continue
+                    print text
+                    print tags
+                    print tag
+                    return True
+
+        i += 1
     return False
 
 DIFF_THRESHOLD = 0.75
@@ -33,7 +50,7 @@ conn = psycopg2.connect("dbname=%s user=%s password=%s" % (postgres_db, postgres
 cur = conn.cursor()
 
 sents = conll2002.tagged_sents()
-hmm_tagger = HiddenMarkovModelTagger.train(sents)
+hmm_tagger = BigramTagger(sents)
 
 query_pool = []
 
