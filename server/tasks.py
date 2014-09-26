@@ -6,6 +6,9 @@ import time
 from nltk.corpus import conll2002
 from nltk.tag.hmm import HiddenMarkovModelTagger
 from nltk import word_tokenize
+import requests
+import json
+import redis
 
 app = Celery('tasks', broker='redis://localhost:6379/0')
 
@@ -14,6 +17,8 @@ twitter_stream = TwitterStream(auth=auth)
 
 conn = psycopg2.connect("dbname=%s user=%s password=%s" % (postgres_db, postgres_user, postgres_pass))
 cur = conn.cursor()
+
+redis = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 sents = conll2002.tagged_sents()
 hmm_tagger = HiddenMarkovModelTagger.train(sents)
@@ -25,7 +30,27 @@ def analyze_tweet(text):
     tags = hmm_tagger.tag(tokens)
     for tag in tags:
         if tag[1] == 'NP':
-            print tag[0]
+            if redis.exists('aragopedia:%s' % tag[0]):
+                if redis.get('aragopedia:%s' % tag[0]) == 'None':
+                    return False
+                else:
+                    return True
+            else:
+                payload = {'action': 'query', 'list': 'search', 'srwhat': 'title', 'srsearch': '%s' % tag[0], 'format': 'json'}
+                r = requests.get('http://opendata.aragon.es/aragopedia/api.php', params=payload)
+                json_result = json.loads(r.text)
+                try:
+                    if len(json_result['query']['search']) > 0:
+                        title = json_result['query']['search'][0]['title']
+                        redis.set('aragopedia:%s' % tag[0], title)
+                        print text
+                        print tag[0]
+                        print title
+                        return True
+                    else:
+                        redis.set('aragopedia:%s' % tag[0], 'None')
+                except:
+                    print r.text
 
 @app.task
 def browse_tuits():
@@ -86,18 +111,18 @@ def get_stream():
 
     for tweet in iterator:
         text = tweet['text']
-        analyze_tweet(text)
-        user = tweet['user']['screen_name']
-        name = tweet['user']['name']
-        id = tweet['id']
-        lat, long = None, None
-        if tweet['coordinates'] != None:
-            lat = tweet['coordinates']['coordinates'][1]
-            long = tweet['coordinates']['coordinates'][0]
-        datetime = time.strftime('%Y-%m-%d %H:%M:%S', time.strptime(tweet['created_at'],'%a %b %d %H:%M:%S +0000 %Y'))
-        query = "INSERT INTO tweets (id, text, uzers, name, lat, long, datetime) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-        try:
-            cur.execute(query, (id, text, user, name, lat, long, datetime))
-            conn.commit()
-        except:
-            print 'Error!'
+        if analyze_tweet(text):
+            user = tweet['user']['screen_name']
+            name = tweet['user']['name']
+            id = tweet['id']
+            lat, long = None, None
+            if tweet['coordinates'] != None:
+                lat = tweet['coordinates']['coordinates'][1]
+                long = tweet['coordinates']['coordinates'][0]
+            datetime = time.strftime('%Y-%m-%d %H:%M:%S', time.strptime(tweet['created_at'],'%a %b %d %H:%M:%S +0000 %Y'))
+            query = "INSERT INTO tweets (id, text, uzers, name, lat, long, datetime) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+            try:
+                cur.execute(query, (id, text, user, name, lat, long, datetime))
+                conn.commit()
+            except:
+                print 'Error!'
