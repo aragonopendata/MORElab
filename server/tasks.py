@@ -26,7 +26,7 @@ def browse_tuits():
             lat = tweet['coordinates']['coordinates'][1]
             long = tweet['coordinates']['coordinates'][0]
         datetime = time.strftime('%Y-%m-%d %H:%M:%S', time.strptime(tweet['created_at'],'%a %b %d %H:%M:%S +0000 %Y'))
-        query = "INSERT INTO tweets (id, text, uzers, name lat, long, datetime) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+        query = "INSERT INTO tweets (id, text, uzers, name, lat, long, datetime) VALUES (%s, %s, %s, %s, %s, %s, %s)"
         try:
             cur.execute(query, (id, text, user, name, lat, long, datetime))
         except:
@@ -54,7 +54,7 @@ def browse_tuits():
                 lat = tweet['coordinates']['coordinates'][1]
                 long = tweet['coordinates']['coordinates'][0]
             datetime = time.strftime('%Y-%m-%d %H:%M:%S', time.strptime(tweet['created_at'],'%a %b %d %H:%M:%S +0000 %Y'))
-            query = "INSERT INTO tweets (id, text, uzers, name lat, long, datetime) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+            query = "INSERT INTO tweets (id, text, uzers, name, lat, long, datetime) VALUES (%s, %s, %s, %s, %s, %s, %s)"
             try:
                 cur.execute(query, (id, text, user, name, lat, long, datetime))
             except:
