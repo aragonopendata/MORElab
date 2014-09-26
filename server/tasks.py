@@ -1,9 +1,15 @@
 from celery import Celery
 from twitter import *
 from settings import auth
+from nltk.corpus import conll2002
+from nltk.tag.hmm import HiddenMarkovModelTagger
 
 app = Celery('tasks', broker='redis://localhost:6379/0')
+
 twitter = Twitter(auth=auth)
+
+sents = conll2002.tagged_sents()
+hmm_tagger = HiddenMarkovModelTagger.train(sents)
 
 @app.task
 def browse_tuits():
