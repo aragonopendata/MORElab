@@ -65,7 +65,7 @@ def analyze_tweet(text):
                                         pos = i
                                 for i in range(len(tokens)):
                                     if tokens[i] == ltag:
-                                        pos_token = ''
+                                        pos_token = i
                                 if pos > -1 and pos_token > -1:
                                     new_tag = ''
                                     for i in range(pos_token - pos, len(pos_token)):
@@ -165,5 +165,6 @@ def get_stream():
             try:
                 cur.execute(query, (id, text, user, name, lat, long, datetime))
                 conn.commit()
-            except:
+            except Exception as e:
+                print e
                 print 'Error!'
