@@ -32,34 +32,35 @@ def analyze_tweet(text):
     tokens = word_tokenize(text)
     tags = hmm_tagger.tag(tokens)
     for tag in tags:
+        ltag = tag[0].lower()
         if tag[1] == 'NP':
-            if redis.exists('aragopedia:%s' % tag[0]):
-                if redis.get('aragopedia:%s' % tag[0]) == 'None':
+            if redis.exists('aragopedia:%s' % ltag):
+                if redis.get('aragopedia:%s' % ltag) == 'None':
                     return False
                 else:
                     return True
             else:
-                payload = {'action': 'query', 'list': 'search', 'srwhat': 'title', 'srsearch': '%s' % tag[0], 'format': 'json'}
+                payload = {'action': 'query', 'list': 'search', 'srwhat': 'title', 'srsearch': '%s' % ltag, 'format': 'json'}
                 r = requests.get('http://opendata.aragon.es/aragopedia/api.php', params=payload)
                 json_result = json.loads(r.text)
                 try:
                     if len(json_result['query']['search']) > 0:
                         title = json_result['query']['search'][0]['title']
-                        ratio = difflib.SequenceMatcher(None, tag[0], title).ratio()
+                        ratio = difflib.SequenceMatcher(None, ltag, title).ratio()
                         if ratio >= DIFF_THRESHOLD:
-                            redis.set('aragopedia:%s' % tag[0], title)
+                            redis.set('aragopedia:%s' % ltag, title)
                             print text
-                            print tag[0]
+                            print ltag
                             print title
                             print ratio
                             return True
                         else:
-                            print tag[0]
+                            print ltag
                             print title
                             print ratio
-                            redis.set('aragopedia:%s' % tag[0], 'None')
+                            redis.set('aragopedia:%s' % ltag, 'None')
                     else:
-                        redis.set('aragopedia:%s' % tag[0], 'None')
+                        redis.set('aragopedia:%s' % ltag, 'None')
                 except:
                     print r.text
 
