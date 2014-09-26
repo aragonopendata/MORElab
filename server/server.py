@@ -1,7 +1,6 @@
 #!flask/bin/python
 from flask import Flask
 from twitter import *
-from tasks import browse_tuits, get_stream
 from settings import postgres_db, postgres_pass, postgres_user
 import psycopg2
 
