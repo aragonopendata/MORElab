@@ -32,7 +32,18 @@ angular.module('jacathonApp')
           }));
         });
         $q.all(promiseArr).then(function(){
-          $scope.tuits=$scope.tuits.concat(tuits);
+          //$scope.tuits=$scope.tuits.concat(tuits);
+          for(var i=0;i<tuits.length;i++){
+            var found=false;
+            for(var j=0;j<$scope.tuits.length&&!found;j++){
+              if(tuits[i].id === $scope.tuits[j].id){
+                found=true;
+              }
+            }
+            if(!found){
+              $scope.tuits.push(tuits[i]);
+            }
+          }
           function loadjscssfile(filename, filetype){
  if (filetype=="js"){ //if filename is a external JavaScript file
   var fileref=document.createElement('script')
@@ -54,7 +65,7 @@ loadjscssfile("scripts/widgets.js", "js") //dynamically load and add this .js fi
     	});
 	};
   refreshData();
-    var promise = $interval(refreshData, 60000);
+    var promise = $interval(refreshData, 5000);
     var input = {
   url: "https://twitter.com/AritzBi/status/515522092704727041",
   tweet: "pito",
@@ -65,6 +76,13 @@ loadjscssfile("scripts/widgets.js", "js") //dynamically load and add this .js fi
  var query =  $.param(input);
  $scope.testUrl="https://twitframe.com/show?"+query;
  $scope.testUrl=$sce.trustAsResourceUrl($scope.testUrl);
+
+ $scope.$on('$destroy', function(){
+    if (angular.isDefined(promise)) {
+        $interval.cancel(promise);
+        promise = undefined;
+    }
+});
   });
 
         /*for(var i=0;i<tuits.length;i++){

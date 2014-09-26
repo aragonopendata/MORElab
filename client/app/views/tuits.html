@@ -1,18 +1,10 @@
-<div class="panel panel-default">
-	<ul class="list-group">
-		<li  class="list-group-item"  ng-repeat="tuit in tuits " >
-			<div class="row">
+			<div class="row" ng-repeat="tuit in tuits | orderBy: '-datetime'">
 				<div class="col-md-12">
 					 <!--<iframe border=0 frameborder=0 height=250 width=550 
  					ng-src="{{tuit.url}}"></iframe>-->
  					<div class="tweet subject expanded h-entry" ng-bind-html="tuit.url"></div>
 				</div>
-			</div>
-		</li>
-	</ul>
-</div>
-<div class="col-md-3 col-lg-3">
-</div>
+
 <!--<iframe border=0 frameborder=0 height=250 width=550 
  src="{{myOtherUrl}}"></iframe>-->
 
