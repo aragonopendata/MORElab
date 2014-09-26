@@ -1,5 +1,5 @@
 'use strict';
-
+//psql -f tweets.bak -U jacathon -W tweets
 //Texto, timestamp, id, lat, long, autor, foto (maybe)
 angular.module('jacathonApp')
   .controller('TuitsCtrl', function ($scope,$http,$interval,$sce) {
