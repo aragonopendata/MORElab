@@ -3,8 +3,10 @@ from flask import Flask
 from twitter import *
 from settings import postgres_db, postgres_pass, postgres_user
 import psycopg2
+from flask_cors import CORS
 
 app = Flask(__name__)
+cors = CORS(app)
 
 conn = psycopg2.connect("dbname=%s user=%s password=%s" % (postgres_db, postgres_user, postgres_pass))
 cur = conn.cursor()
