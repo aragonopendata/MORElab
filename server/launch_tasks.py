@@ -20,7 +20,7 @@ def analyze(text, track_list):
         if item in text:
             if len(item.split(' ')) > 1:
                 print text
-                return True
+                return True, item
 
     tokens = word_tokenize(text)
     tags = hmm_tagger.tag(tokens)
@@ -38,10 +38,10 @@ def analyze(text, track_list):
                     print text
                     print tags
                     print tag
-                    return True
+                    return True, tag[0]
 
         i += 1
-    return False
+    return False, None
 
 DIFF_THRESHOLD = 0.75
 
@@ -83,7 +83,8 @@ track_list = query.split(',')
 iterator = twitter_stream.statuses.filter(track=query, language='es')
 for tweet in iterator:
         text = tweet['text']
-        if analyze(text, track_list):
+        check, token = analyze(text, track_list)
+        if check:
             user = tweet['user']['screen_name']
             name = tweet['user']['name']
             id = tweet['id']
@@ -92,9 +93,9 @@ for tweet in iterator:
                 lat = tweet['coordinates']['coordinates'][1]
                 long = tweet['coordinates']['coordinates'][0]
             datetime = time.strftime('%Y-%m-%d %H:%M:%S', time.strptime(tweet['created_at'],'%a %b %d %H:%M:%S +0000 %Y'))
-            query = "INSERT INTO tweets (id, text, uzers, name, lat, long, datetime) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+            query = "INSERT INTO tweets (id, text, uzers, name, lat, long, datetime, municipality) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
             try:
-                cur.execute(query, (id, text, user, name, lat, long, datetime))
+                cur.execute(query, (id, text, user, name, lat, long, datetime, token))
                 conn.commit()
             except Exception as e:
                 print e
