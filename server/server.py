@@ -101,4 +101,4 @@ def pagination(page):
 if __name__ == '__main__':
     #browse_tuits.delay()
     #get_stream.delay()
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)
