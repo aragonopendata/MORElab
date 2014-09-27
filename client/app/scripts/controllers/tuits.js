@@ -9,7 +9,6 @@ angular.module('jacathonApp')
   	$scope.myOtherUrl="https://twitframe.com/show?url="+$scope.myOtherUrl;
   	$scope.myOtherUrl=$sce.trustAsResourceUrl($scope.myOtherUrl);
   	console.log($scope.myOtherUrl);*/
-    
   	var refreshData = function() {
     // Assign to scope within callback to avoid data flickering on screen
       var tuitData;
@@ -23,11 +22,9 @@ angular.module('jacathonApp')
             hide_media: true
           };
           var query =  $.param(query);
-                    console.log(query);
-
           embedTuitURL="https://api.twitter.com/1/statuses/oembed.json?"+query;
           embedTuitURL=$sce.trustAsResourceUrl(embedTuitURL);
-          promiseArr.push($http.get(embedTuitURL).success(function(embedTweet) {
+          promiseArr.push($http.get(embedTuitURL).success(function(embedTweet,code) {
             tuit.url=embedTweet.html;
           }));
         });
@@ -37,7 +34,10 @@ angular.module('jacathonApp')
             var found=false;
             for(var j=0;j<$scope.tuits.length&&!found;j++){
               if(tuits[i].id === $scope.tuits[j].id){
+                console.log("The Same");
                 found=true;
+              }else{
+                console.log("Not the same");
               }
             }
             if(!found){
@@ -45,28 +45,33 @@ angular.module('jacathonApp')
             }
           }
           function loadjscssfile(filename, filetype){
- if (filetype=="js"){ //if filename is a external JavaScript file
-  var fileref=document.createElement('script')
-  fileref.setAttribute("type","text/javascript")
-  fileref.setAttribute("src", filename)
- }
- else if (filetype=="css"){ //if filename is an external CSS file
-  var fileref=document.createElement("link")
-  fileref.setAttribute("rel", "stylesheet")
-  fileref.setAttribute("type", "text/css")
-  fileref.setAttribute("href", filename)
- }
- if (typeof fileref!="undefined")
-  document.getElementsByTagName("body")[0].appendChild(fileref)
-}
+            if (filetype=="js"){ //if filename is a external JavaScript file
+              var fileref=document.createElement('script')
+              fileref.setAttribute("type","text/javascript")
+              fileref.setAttribute("src", filename)
+            }
+            else if (filetype=="css"){ //if filename is an external CSS file
+              var fileref=document.createElement("link")
+              fileref.setAttribute("rel", "stylesheet")
+              fileref.setAttribute("type", "text/css")
+              fileref.setAttribute("href", filename)
+            }
+            if (typeof fileref!="undefined")
+              document.getElementsByTagName("body")[0].appendChild(fileref)
+            }
 
-loadjscssfile("scripts/widgets.js", "js") //dynamically load and add this .js file
+            loadjscssfile("scripts/widgets.js", "js") //dynamically load and add this .js file
         });
-    	});
+    	}).error(function (data, status) {
+          console.log(data);
+          console.log(status);
+      }).catch(function (error) {
+         console.log(error);
+      });
 	};
-  refreshData();
+    refreshData();
     var promise = $interval(refreshData, 5000);
-    var input = {
+    /*var input = {
   url: "https://twitter.com/AritzBi/status/515522092704727041",
   tweet: "pito",
   author_name: "AritzBi",
@@ -75,7 +80,7 @@ loadjscssfile("scripts/widgets.js", "js") //dynamically load and add this .js fi
 }
  var query =  $.param(input);
  $scope.testUrl="https://twitframe.com/show?"+query;
- $scope.testUrl=$sce.trustAsResourceUrl($scope.testUrl);
+ $scope.testUrl=$sce.trustAsResourceUrl($scope.testUrl);*/
 
  $scope.$on('$destroy', function(){
     if (angular.isDefined(promise)) {

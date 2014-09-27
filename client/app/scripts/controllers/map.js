@@ -47,7 +47,6 @@ angular.module('jacathonApp')
           }));
         });
         $q.all(promiseArr).then(function(){
-          //$scope.tuits=$scope.tuits.concat(tuits);
           $scope.geoJson={};
           var geoJson=  { "type": "FeatureCollection",
             "features": [
@@ -72,28 +71,29 @@ angular.module('jacathonApp')
           }));
           leafletData.getMap().then(function(map){
             $scope.geoJson.addTo(map);
-                      function loadjscssfile(filename, filetype){
- if (filetype=="js"){ //if filename is a external JavaScript file
-  var fileref=document.createElement('script')
-  fileref.setAttribute("type","text/javascript")
-  fileref.setAttribute("src", filename)
- }
- else if (filetype=="css"){ //if filename is an external CSS file
-  var fileref=document.createElement("link")
-  fileref.setAttribute("rel", "stylesheet")
-  fileref.setAttribute("type", "text/css")
-  fileref.setAttribute("href", filename)
- }
- if (typeof fileref!="undefined")
-  document.getElementsByTagName("body")[0].appendChild(fileref)
-}
-
-loadjscssfile("scripts/widgets.js", "js") //dynamically load and add this .js file
+            function loadjscssfile(filename, filetype){
+            if (filetype=="js"){ //if filename is a external JavaScript file
+              var fileref=document.createElement('script')
+              fileref.setAttribute("type","text/javascript")
+              fileref.setAttribute("src", filename)
+            }
+            else if (filetype=="css"){ //if filename is an external CSS file
+              var fileref=document.createElement("link")
+              fileref.setAttribute("rel", "stylesheet")
+              fileref.setAttribute("type", "text/css")
+              fileref.setAttribute("href", filename)
+            }
+            if (typeof fileref!="undefined")
+              document.getElementsByTagName("body")[0].appendChild(fileref)
+            }
+            loadjscssfile("scripts/widgets.js", "js") //dynamically load and add this .js file
           });
-
         });
-
-
+      }).error(function (data, status) {
+          console.log(data);
+          console.log(status);
+      }).catch(function (error) {
+         console.log(error);
       });
   });
 
