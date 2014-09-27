@@ -31,7 +31,7 @@ angular.module('jacathonApp')
         L.control.layers(baseMaps).addTo(map);
       });
 
-      $http.get('http://localhost:5000/morelab/api/v1.0/stream').success(function(tuits) {
+      $http.get('http://155.210.71.106/morelab/api/v1.0/stream').success(function(tuits) {
         var promiseArr = [];
         angular.forEach( tuits, function(tuit){
           var query={
