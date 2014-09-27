@@ -42,10 +42,6 @@ def analyze(text, track_list):
                 break
     return False
 
-def lol(iterator):
-    for tweet in iterator:
-        print 're-lol'
-
 @app.task
 def get_stream(query_pool):
     twitter_stream = TwitterStream(auth=auth)

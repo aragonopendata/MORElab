@@ -50,7 +50,7 @@ conn = psycopg2.connect("dbname=%s user=%s password=%s" % (postgres_db, postgres
 cur = conn.cursor()
 
 sents = conll2002.tagged_sents()
-hmm_tagger = TrigramTagger(sents)
+hmm_tagger = HiddenMarkovModelTagger.train(sents)
 
 query_pool = []
 
@@ -69,7 +69,7 @@ json_result = json.loads(r.text)
 i = 0
 for item in json_result['results']['bindings']:
     label = item['label']['value']
-    if label not in ['Luna', 'Plan']:
+    if label not in ['Luna', 'Plan', 'Campo', 'Alba', 'Escucha', 'Andorra', 'Bielsa']:
         if i == 0:
             query += label
         else:
