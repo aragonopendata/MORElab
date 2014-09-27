@@ -14,7 +14,7 @@ angular.module('jacathonApp')
     // Assign to scope within callback to avoid data flickering on screen
       var tuitData;
       var embedTuitURL;
-  		$http.get('http://155.210.71.106/morelab/api/v1.0/stream').success(function(tuits) {
+  		$http.get('http://155.210.71.106:5000/morelab/api/v1.0/stream').success(function(tuits) {
         var promiseArr = [];
         angular.forEach( tuits, function(tuit){
           var query={

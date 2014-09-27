@@ -1,0 +1,12 @@
+from twitter import *
+
+auth = OAuth(
+    consumer_key='wTI68gsQ8r3p4lvsfr5qAlzPh',
+    consumer_secret='Hg3pSQqvOuB6i7D84VsJOjqYh365QeSZ2jG0L9wk4wl9bP2xvy',
+    token='224420190-wMXAE8BtxNaueoGcNc94WksYjTNVUFooZbPc4GS6',
+    token_secret='YqgsL02lg5aiwaM4cwELDj5caKr1hUAXRpGSrzyZRdRqy'
+)
+
+postgres_db = 'tweets'
+postgres_pass = 'j4c4th0n'
+postgres_user = 'jacathon'
